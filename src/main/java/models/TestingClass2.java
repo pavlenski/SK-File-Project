@@ -109,12 +109,32 @@ public class TestingClass2 {
             e.printStackTrace();
         }*/
 
-        try {
+        /*try {
             directory.list_directories("D:\\SK Test\\Novo ime", true);
         } catch (List_Directories_Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
+        /*try {
+            local.create_multiple_files("D:\\SK Test", "testFile", 10);
+        } catch (Create_Multiple_Files_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        /*try {
+            directory.create_multiple_directories("D:\\SK Test", "testdir", 10);
+        } catch (Create_Multiple_Directories_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        /*final File folder = new File("D:\\SK Test\\Novo ime");
+        List<File> result = new ArrayList<>();
+        search(".*\\.png", folder, result);
+        try {
+            local.generate_archive_from_multiple_files(result, "MultipleArcive", "D:\\SK Test\\Novo ime");
+        } catch (Generate_Archive_From_Multiple_Files_Exception e) {
+            e.printStackTrace();
+        }*/
     }
 
     public static void search(final String pattern, final File folder, List<File> result) {

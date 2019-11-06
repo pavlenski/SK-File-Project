@@ -40,6 +40,27 @@ public class Local_Directory implements Directory_Manipulation_Interface {
     }
 
     @Override
+    public void create_multiple_directories(String path, String common_directories_name, int no_directories) throws Create_Multiple_Directories_Exception {
+        if (!path.isEmpty() && path.startsWith(storage_path)) {
+            for (int i = 1; i <= no_directories; i++){
+                File file = new File(path + File.separator + common_directories_name + i);
+                if (!file.exists()) {
+                    if (file.mkdir()) {
+                        continue;
+                    } else {
+                        throw new Create_Multiple_Directories_Exception();
+                    }
+                } else {
+                    throw new Create_Multiple_Directories_Exception();
+                }
+            }
+            System.out.println("Directories \"" + common_directories_name + "{1..." + no_directories +"}\" successfully created at \"" + path + "\".");
+        } else {
+            throw new Create_Multiple_Directories_Exception();
+        }
+    }
+
+    @Override
     public void delete_directory(String path) throws Delete_Exception {
         if (!path.isEmpty() && path.startsWith(storage_path)) {
             File file = new File(path);
@@ -262,6 +283,11 @@ public class Local_Directory implements Directory_Manipulation_Interface {
         } else {
             throw new List_Directories_Exception();
         }
+    }
+
+    @Override
+    public void create_extension_blacklist(String s, String[] strings) throws Create_Extension_Blacklist_Exception {
+
     }
 
     public String getStorage_path() {
