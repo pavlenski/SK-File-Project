@@ -15,15 +15,15 @@ public interface File_Manipulation_Interface {
 
     void download_file(String source, String destination) throws Download_Exception;
 
-    void download_multiple_files(ArrayList<File> files, String source, String destination) throws Download_Multiple_Exception;
+    void download_multiple_files(List<File> files, String source, String destination) throws Download_Multiple_Exception;
 
     void upload_file(String source, String destination) throws Upload_Exception;
 
-    void upload_multiple_files(ArrayList<File> files, String destination, String name) throws Upload_Multiple_Exception;
+    void upload_multiple_files(List<File> files, String destination, String name) throws Upload_Multiple_Exception;
 
     void generate_archive_file(String path, String archive_name) throws Archive_Exception;
 
-    void upload_multiple_archived_files(ArrayList<File> files, String destination, String name) throws Upload_Multiple_Archives_Exception;
+    void upload_multiple_archived_files(List<File> files, String destination, String name) throws Upload_Multiple_Archives_Exception;
 
     void move_file(String source, String destination) throws Move_Exception;
 
