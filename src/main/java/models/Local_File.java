@@ -132,7 +132,7 @@ public class Local_File implements File_Manipulation_Interface {
             File file = new File(path);
             if(file.isFile() && file.exists()) {
                 try {
-                    if (!archive_name.endsWith(".zip") && !archive_name.endsWith(".rar")) archive_name += ".zip";
+                    if (!archive_name.endsWith(".zip")) archive_name += ".zip";
 
                     FileOutputStream fos = new FileOutputStream(path.substring(0, path.length() - file.getName().length()) +  archive_name);
                     ZipOutputStream zipOut = new ZipOutputStream(fos);

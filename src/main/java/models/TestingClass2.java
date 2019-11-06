@@ -14,8 +14,9 @@ public class TestingClass2 {
 
     public static void main(String[] args) {
         Local_File local = new Local_File();
+        Local_Directory directory = new Local_Directory();
         local.setStorage_path("C:\\Users\\Nikola\\Desktop\\SK Test");
-
+        directory.setStorage_path("D:\\SK Test");
         /*try {
             local.create_file("C:\\Users\\Nikola\\Desktop\\SK Test", "Test file");
         } catch (Create_File_Exception e) {
@@ -60,6 +61,42 @@ public class TestingClass2 {
         } catch (Invalid_Path_Exception e) {
             e.printStackTrace();
         }*/
+
+        /*try {
+            directory.create_directory("C:\\Users\\Nikola\\Desktop\\SK Test\\", "new_dir");
+        } catch (Create_Directory_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        /*try {
+            directory.delete_directory("D:\\SK Test\\inner");
+        } catch (Delete_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        /*try {
+            directory.download_directory("D:\\SK Test\\Other folder\\naziv.zip", "D:\\SK Test");
+        } catch (Download_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        /*try {
+            directory.generate_archive_directory("D:\\SK Test\\Other folder", "naziv");
+        } catch (Archive_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        /*try {
+            directory.move_directory("D:\\SK Test\\Other folder\\Inner other folder", "D:\\SK Test");
+        } catch (Move_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            directory.rename_directory("D:\\SK Test\\Other folder", "Novo ime");
+        } catch (Rename_Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void search(final String pattern, final File folder, List<File> result) {
