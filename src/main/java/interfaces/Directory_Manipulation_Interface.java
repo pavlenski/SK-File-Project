@@ -9,6 +9,8 @@ public interface Directory_Manipulation_Interface {
 
     void create_directory(String path, String directory_name) throws Create_Directory_Exception;
 
+    void create_multiple_directories(String path, String common_directories_name, int no_directories) throws Create_Multiple_Directories_Exception;
+
     void delete_directory(String path) throws Delete_Exception;
 
     void upload_directory(String source, String destination) throws Upload_Exception;
@@ -32,5 +34,7 @@ public interface Directory_Manipulation_Interface {
     void list_files(String path, String[] extension_filter, boolean recursive) throws List_Files_Exception;
 
     void list_directories(String path, boolean recursive) throws List_Directories_Exception;
+
+    void create_extension_blacklist(String path, String[] extensions) throws Create_Extension_Blacklist_Exception;
 
 }

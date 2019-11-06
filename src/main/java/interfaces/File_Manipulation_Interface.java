@@ -11,6 +11,8 @@ public interface File_Manipulation_Interface {
 
     void create_file(String path, String file_name) throws Create_File_Exception, Invalid_Path_Exception;
 
+    void create_multiple_files(String path, String common_files_name, int no_files) throws Create_Multiple_Files_Exception;
+
     void delete_file(String path) throws Delete_Exception;
 
     void download_file(String source, String destination) throws Download_Exception;
@@ -22,6 +24,8 @@ public interface File_Manipulation_Interface {
     void upload_multiple_files(List<File> files, String destination, String name) throws Upload_Multiple_Exception;
 
     void generate_archive_file(String path, String archive_name) throws Archive_Exception;
+
+    void generate_archive_from_multiple_files(List<File> files, String archive_name, String destination) throws Generate_Archive_From_Multiple_Files_Exception;
 
     void upload_multiple_archived_files(List<File> files, String destination, String name) throws Upload_Multiple_Archives_Exception;
 
