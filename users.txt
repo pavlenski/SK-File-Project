@@ -1,0 +1,2 @@
+admin:admin:ADMIN
+nikola:1234:BASIC
