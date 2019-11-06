@@ -29,8 +29,8 @@ public interface Directory_Manipulation_Interface {
 
     void rename_directory(String path, String new_name) throws Rename_Exception;
 
-    void list_files(String path, boolean include_extensions) throws List_Files_Exception;
+    void list_files(String path, String[] extension_filter, boolean recursive) throws List_Files_Exception;
 
-    void list_directories(String path) throws List_Directories_Exception;
+    void list_directories(String path, boolean recursive) throws List_Directories_Exception;
 
 }
