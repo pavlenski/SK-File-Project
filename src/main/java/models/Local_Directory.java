@@ -3,12 +3,12 @@ package models;
 import exceptions.*;
 import interfaces.Directory_Manipulation_Interface;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -68,6 +68,7 @@ public class Local_Directory implements Directory_Manipulation_Interface {
                 if (!destination_directory.exists()) {
                     try {
                         FileUtils.copyDirectory(source_directory, destination_directory);
+                        System.out.println("Directory \"" + source_directory.getName() + "\" successfully copied as \"" + destination_directory.getName() + "\" to \"" + destination + "\".");
                     } catch (IOException e) {
                         throw new Download_Exception();
                     }
@@ -91,6 +92,11 @@ public class Local_Directory implements Directory_Manipulation_Interface {
     @Override
     public void upload_multiple_directories(List<File> files, String destination, String name) throws Upload_Multiple_Exception {
         // In local, upload is same as download.
+    }
+
+    @Override
+    public void download_multiple_directories(List<File> directories, String destination, String name) throws Download_Multiple_Exception {
+
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
@@ -138,6 +144,8 @@ public class Local_Directory implements Directory_Manipulation_Interface {
 
                     zipOut.close();
                     fos.close();
+
+                    System.out.println("Directory \"" + file.getName() + "\" successfully archived as \"" + archive_name + "\" at \"" + path.substring(0, path.length() - file.getName().length()) + "\".");
                 } catch (Exception e) {
                     throw new Archive_Exception();
                 }
@@ -156,15 +164,21 @@ public class Local_Directory implements Directory_Manipulation_Interface {
     }
 
     @Override
+    public void download_multiple_archived_directories(List<File> list, String s, String s1) throws Download_Multiple_Archives_Exception {
+
+    }
+
+    @Override
     public void move_directory(String source, String destination) throws Move_Exception {
-        if(!destination.contains(source) && !source.isEmpty() && !destination.isEmpty() && destination.startsWith(storage_path)) {
+
+        if (!destination.contains(source) && !source.isEmpty() && !destination.isEmpty() && destination.startsWith(storage_path)) {
             File source_directory = new File(source);
             if (source_directory.exists() && source_directory.isDirectory()) {
                 File destination_directory = new File(destination + File.separator + source_directory.getName());
-                if (!destination_directory.exists()){
+                if (!destination_directory.exists()) {
                     try {
                         FileUtils.moveDirectory(source_directory, destination_directory);
-                        System.out.printf("Directory %s is successfully moved to %s!\n", source, destination);
+                        System.out.printf("Directory \"" + source_directory.getName() + "\" successfully moved to \"" + destination + "\".");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -178,6 +192,7 @@ public class Local_Directory implements Directory_Manipulation_Interface {
         } else {
             throw new Move_Exception();
         }
+
     }
 
     @Override
@@ -187,11 +202,11 @@ public class Local_Directory implements Directory_Manipulation_Interface {
         if (old_name_file.exists() && old_name_file.isDirectory()) {
             path = path.substring(0, path.length() - old_name_file.getName().length());
             File new_name_file = new File(path + File.separator + new_name);
-            if (!new_name_file.exists()){
+            if (!new_name_file.exists()) {
                 if (old_name_file.renameTo(new_name_file)) {
-                    System.out.println("Directory renamed successfully");
+                    System.out.println("Directory \"" + old_name_file.getName() + "\" successfully renamed to \"" + new_name + "\".");
                 } else {
-                    System.out.println("Failed to rename directory");
+                    System.out.println("Failed to rename directory.");
                     throw new Rename_Exception();
                 }
             } else {
@@ -201,6 +216,52 @@ public class Local_Directory implements Directory_Manipulation_Interface {
             throw new Rename_Exception();
         }
 
+    }
+
+    @Override
+    public void list_files(String path, String[] extension_filter, boolean recursive) throws List_Files_Exception {
+        if (!path.isEmpty() && path.startsWith(storage_path)) {
+            File directory = new File(path);
+            if (directory.exists() && directory.isDirectory()) {
+                ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(directory, extension_filter, recursive));
+                Collections.sort(files);
+                System.out.println("Files in \"" + path + "\" are:");
+                for (File f : files){
+                    System.out.println(f.getName());
+                }
+            } else {
+                throw new List_Files_Exception();
+            }
+        } else {
+            throw new List_Files_Exception();
+        }
+    }
+
+    @Override
+    public void list_directories(String path, boolean recursive) throws List_Directories_Exception {
+        if (!path.isEmpty() && path.startsWith(storage_path)) {
+            File directory = new File(path + File.separator);
+            if (directory.exists() && directory.isDirectory()) {
+                ArrayList<File> directories = null;
+                if (recursive){
+                    directories = new ArrayList<>(FileUtils.listFilesAndDirs(directory, new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY));
+                    directories.remove(directory);
+                    System.out.println("Directories in \"" + path + "\" are:");
+                    for (File d : directories){
+                        System.out.println(d.getName());
+                    }
+                } else {
+                    File[] dirs = directory.listFiles((java.io.FileFilter) FileFilterUtils.directoryFileFilter());
+                    for (File d:dirs){
+                        System.out.println(d.getName());
+                    }
+                }
+            } else {
+                throw new List_Directories_Exception();
+            }
+        } else {
+            throw new List_Directories_Exception();
+        }
     }
 
     public String getStorage_path() {

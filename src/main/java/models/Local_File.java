@@ -2,6 +2,7 @@ package models;
 
 import exceptions.*;
 import interfaces.File_Manipulation_Interface;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -31,7 +32,7 @@ public class Local_File implements File_Manipulation_Interface {
             if(!file.exists()) {
                 try {
                     file.createNewFile();
-                    System.out.println("File \"" + file.getName() + "\" successfully created.");
+                    System.out.println("File \"" + file.getName() + "\" successfully created at \"" + path + "\".");
                 } catch (Exception e) {
                     throw new Create_File_Exception();
                 }
@@ -51,7 +52,7 @@ public class Local_File implements File_Manipulation_Interface {
             File file = new File(path);
             if(file.exists() && file.isFile()) {
                 file.delete();
-                System.out.println("File \"" + file.getName() + "\" successfully deleted.");
+                System.out.println("File \"" + file.getName() + "\" at \"" + path.substring(0, path.length() - file.getName().length()) + "\" successfully deleted.");
             } else {
                 throw new Delete_Exception();
             }
@@ -65,13 +66,12 @@ public class Local_File implements File_Manipulation_Interface {
     public void download_file(String source, String destination) throws Download_Exception {
 
         if(!source.isEmpty() && !destination.isEmpty() && destination.startsWith(storage_path)) {
-            File file = new File(source);
-            if(file.exists() && file.isFile()) {
-                File downloaded_file = new File(destination + File.separator + file.getName());
+            File source_file = new File(source);
+            if(source_file.exists() && source_file.isFile()) {
+                File destination_file = new File(destination + File.separator + source_file.getName());
                 try {
-                    downloaded_file.createNewFile();
-                    Files.copy(Paths.get(file.getAbsolutePath()), Paths.get(destination + File.separator + file.getName()), StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("File " + file.getName() + " successfully copied to \"" + destination + "\".");
+                    FileUtils.copyFile(source_file, destination_file);
+                    System.out.println("File \"" + source_file.getName() + "\" successfully copied to \"" + destination + "\".");
                 } catch (Exception e) {
                     throw new Download_Exception();
                 }
@@ -87,23 +87,22 @@ public class Local_File implements File_Manipulation_Interface {
     @Override
     public void download_multiple_files(List<File> files, String source, String destination) throws Download_Multiple_Exception {
 
-        if (!source.isEmpty() && !destination.isEmpty() && source.startsWith(storage_path) && destination.startsWith(storage_path)){
+        // Proveriti sa Pajom, source se ovde ne koristi, tako da ako se ne koristi ni na cloud implementaciji, moze da se izbrise iz specifikacije.
+
+        if (!destination.isEmpty() && destination.startsWith(storage_path)){
             for (File file : files){
                 if (file.exists() && file.isFile()){
-                    try{
-                        try {
-                            Files.copy(Paths.get(file.getAbsolutePath()), Paths.get(destination + File.separator + file.getName()), StandardCopyOption.REPLACE_EXISTING);
-                            System.out.println("Files are successfully copied to \"" + destination + "\".");
-                        } catch (Exception e) {
-                            throw new Download_Multiple_Exception();
-                        }
-                    } catch (Download_Multiple_Exception e) {
+                    File destination_file = new File(destination + File.separator + file.getName());
+                    try {
+                        FileUtils.copyFile(file, destination_file);
+                    } catch (Exception e) {
                         throw new Download_Multiple_Exception();
                     }
                 } else {
                     continue;
                 }
             }
+            System.out.println("Files successfully copied to \"" + destination + "\".");
         } else {
             throw new Download_Multiple_Exception();
         }
@@ -152,6 +151,8 @@ public class Local_File implements File_Manipulation_Interface {
                     zipOut.close();
                     fis.close();
                     fos.close();
+
+                    System.out.println("File " + file.getName() + " successfully archived as \"" + archive_name + "\".");
                 } catch (Exception e) {
                     throw new Archive_Exception();
                 }

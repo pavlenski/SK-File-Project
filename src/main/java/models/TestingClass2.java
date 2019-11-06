@@ -15,7 +15,7 @@ public class TestingClass2 {
     public static void main(String[] args) {
         Local_File local = new Local_File();
         Local_Directory directory = new Local_Directory();
-        local.setStorage_path("C:\\Users\\Nikola\\Desktop\\SK Test");
+        local.setStorage_path("D:\\SK Test");
         directory.setStorage_path("D:\\SK Test");
         /*try {
             local.create_file("C:\\Users\\Nikola\\Desktop\\SK Test", "Test file");
@@ -32,15 +32,19 @@ public class TestingClass2 {
         }*/
 
         /*try {
-            local.download_file("D:\\display.png", "C:\\Users\\Nikola\\Desktop\\SK Test");
+            local.download_file("D:\\SK Test\\Novo ime\\ADDRaptor.pdf", "D:\\SK Test");
         } catch (Download_Exception e) {
             e.printStackTrace();
         }*/
 
-        /*final File folder = new File("D:\\");
+        /*final File folder = new File("D:\\SK Test\\Novo ime");
         List<File> result = new ArrayList<>();
         search(".*\\.png", folder, result);
-        local.download_multiple_files(result, , );*/
+        try {
+            local.download_multiple_files(result, "", "D:\\SK Test");
+        } catch (Download_Multiple_Exception e) {
+            e.printStackTrace();
+        }*/
 
         /*try {
             local.generate_archive_file("C:\\Users\\Nikola\\Desktop\\SK Test\\Test.txt", "test.");
@@ -92,11 +96,25 @@ public class TestingClass2 {
             e.printStackTrace();
         }*/
 
-        try {
+        /*try {
             directory.rename_directory("D:\\SK Test\\Other folder", "Novo ime");
         } catch (Rename_Exception e) {
             e.printStackTrace();
+        }*/
+
+        /*String[] filter = {"pdf", "png"};
+        try {
+            directory.list_files("D:\\SK Test\\Novo ime", filter, true);
+        } catch (List_Files_Exception e) {
+            e.printStackTrace();
+        }*/
+
+        try {
+            directory.list_directories("D:\\SK Test\\Novo ime", true);
+        } catch (List_Directories_Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     public static void search(final String pattern, final File folder, List<File> result) {
@@ -107,9 +125,9 @@ public class TestingClass2 {
             }
 */
             if (f.isFile()) {
-                if (f.getName().matches(pattern)) {
+                //if (f.getName().matches(pattern)) {
                     result.add(f);
-                }
+                //}
             }
 
         }
