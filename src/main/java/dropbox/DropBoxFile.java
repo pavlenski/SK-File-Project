@@ -10,6 +10,7 @@ import interfaces.File_Manipulation_Interface;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipulation_Interface {
@@ -69,9 +70,10 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
     }
 
     @Override
-    public void download_multiple_files(ArrayList<File> arrayList, String s, String s1) throws Download_Multiple_Exception {
+    public void download_multiple_files(List<File> list, String s, String s1) throws Download_Multiple_Exception {
 
     }
+
 
     @Override
     public void upload_file(String source, String destination) throws Upload_Exception {
@@ -103,9 +105,10 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
     }
 
     @Override
-    public void upload_multiple_files(ArrayList<File> arrayList, String s, String s1) throws Upload_Multiple_Exception {
+    public void upload_multiple_files(List<File> list, String s, String s1) throws Upload_Multiple_Exception {
 
     }
+
 
     @Override
     public void generate_archive_file(String s, String s1) throws Archive_Exception {
@@ -113,7 +116,7 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
     }
 
     @Override
-    public void upload_multiple_archived_files(ArrayList<File> arrayList, String s, String s1) throws Upload_Multiple_Archives_Exception {
+    public void upload_multiple_archived_files(List<File> list, String s, String s1) throws Upload_Multiple_Archives_Exception {
 
     }
 
