@@ -21,12 +21,23 @@ public class TestingClass2 {
         local.setStorage_path("D:\\SK Test");
         directory.setStorage_path("D:\\SK Test");
         local_user.setUsers_file("D:\\SK Test\\users.meta");
-
         try {
+            local_user.init_users();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /*try {
             local_user.create_user("new_user", "new_user_passwprs", UserPriority.BASIC);
         } catch (Create_User_Exception e) {
             e.printStackTrace();
-        }
+        }*/
+
+        /*try {
+            local_user.delete_user("new_user");
+        } catch (Delete_User_Exception e) {
+            e.printStackTrace();
+        }*/
 
         /*try {
             local.create_file("C:\\Users\\Nikola\\Desktop\\SK Test", "Test file");

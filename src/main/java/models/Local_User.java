@@ -18,35 +18,31 @@ public class Local_User implements User_Interface {
 
     public Local_User() {
         this.users = new ArrayList();
-        try {
-            init_users();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-    private void init_users() throws Exception {
+    public void init_users() throws Exception {
+        System.out.println(users_file);
         File file = new File(users_file);
+        System.out.println(users_file);
         if (file.exists()) {
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new FileReader(file));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                String[] parse = line.split(":");
-                User user = null;
-                switch (parse[2]) {
-                    case "ADMIN":
-                        user = new User(parse[0], parse[1], UserPriority.ADMIN);
-                        break;
-                    case "BASIC":
-                        user = new User(parse[0], parse[1], UserPriority.BASIC);
-                        break;
+            try{
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line = "";
+                while ((line = br.readLine()) != null) {
+                    String[] parse = line.split(":");
+                    User user = null;
+                    switch (parse[2]) {
+                        case "ADMIN":
+                            user = new User(parse[0], parse[1], UserPriority.ADMIN);
+                            break;
+                        case "BASIC":
+                            user = new User(parse[0], parse[1], UserPriority.BASIC);
+                            break;
+                    }
+                    users.add(user);
                 }
-                users.add(user);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -78,7 +74,7 @@ public class Local_User implements User_Interface {
     @Override
     public void create_user(String username, String password, UserPriority userPriority) throws Create_User_Exception {
         User new_user = new User(username, password, userPriority);
-        if (users.contains(new_user)) {
+        if (!users.contains(new_user)) {
             users.add(new_user);
             rewrite_users();
         } else throw new Create_User_Exception();
@@ -89,6 +85,7 @@ public class Local_User implements User_Interface {
         for (User u : users) {
             if (u.getUsername().equals(username)) {
                 users.remove(u);
+                rewrite_users();
                 System.out.println("User with username \"" + username + "\" successfully deleted.");
                 return;
             }
