@@ -289,13 +289,6 @@ public class Local_Directory implements Directory_Manipulation_Interface {
 
     }
 
-    @Override
-    public void search(String s) throws Search_Exception {
-
-
-
-    }
-
     public String getStorage_path() {
         return storage_path;
     }
