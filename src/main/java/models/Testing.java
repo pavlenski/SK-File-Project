@@ -300,7 +300,6 @@ public class Testing {
                             String common_name = sc.nextLine();
                             System.out.println("Please enter how many similar files you want to create:");
                             int no_files = sc.nextInt();
-                            System.out.println("Path: " + path + " Common name: " + common_name + " No files: " + no_files);
                             local_file_obj.create_multiple_files(path, common_name, no_files);
                         } else {
                             System.out.println("You don't have permission to do this command!");
@@ -441,8 +440,199 @@ public class Testing {
                     }
                     break;
 
-                /*case "":
-                    break;*/
+                case "create dir":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            System.out.println("Please enter path of where you want to create a directory:");
+                            Scanner sc = new Scanner(System.in);
+                            String path = sc.nextLine();
+                            System.out.println("Please enter how you want to name this directory:");
+                            String name = sc.nextLine();
+                            local_directory_obj.create_directory(path, name);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "create multiple dir":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            Scanner sc = new Scanner(System.in);
+                            System.out.println("Please enter path where you want to create these new directories:");
+                            String path = sc.nextLine();
+                            System.out.println("Please enter common name for these new directories:");
+                            String common_name = sc.nextLine();
+                            System.out.println("Please enter how many similar directories you want to create:");
+                            int no_directories = sc.nextInt();
+                            local_directory_obj.create_multiple_directories(path, common_name, no_directories);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "delete dir":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            System.out.println("Please enter path of a directory you want to delete:");
+                            Scanner sc = new Scanner(System.in);
+                            String path = sc.nextLine();
+                            local_directory_obj.delete_directory(path);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "copy dir":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            System.out.println("Please enter path of a directory you want to copy:");
+                            Scanner sc = new Scanner(System.in);
+                            String source = sc.nextLine();
+                            System.out.println("Please enter path where you want to paste copied directory:");
+                            String destination = sc.nextLine();
+                            local_directory_obj.download_directory(source, destination);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "archive dir":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            System.out.println("Please enter path of a directory you want to archive:");
+                            Scanner sc = new Scanner(System.in);
+                            String path = sc.nextLine();
+                            System.out.println("Please enter how you want to name this archive:");
+                            String name = sc.nextLine();
+                            local_directory_obj.generate_archive_directory(path, name);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "move dir":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            System.out.println("Please enter path of a directory you want to move:");
+                            Scanner sc = new Scanner(System.in);
+                            String source = sc.nextLine();
+                            System.out.println("Please enter path where you want to move selected directory:");
+                            String destination = sc.nextLine();
+                            local_directory_obj.move_directory(source, destination);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "rename dir":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            System.out.println("Please enter path of a directory you want to rename:");
+                            Scanner sc = new Scanner(System.in);
+                            String path = sc.nextLine();
+                            System.out.println("Please enter this directory's new name:");
+                            String new_name = sc.nextLine();
+                            local_directory_obj.rename_directory(path, new_name);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "list files":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        System.out.println("Please enter path of a directory whose files you want to list:");
+                        Scanner sc = new Scanner(System.in);
+                        String path = sc.nextLine();
+                        local_directory_obj.list_files(path, null, false);
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "list files r":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        System.out.println("Please enter path of a directory whose files you want to list:");
+                        Scanner sc = new Scanner(System.in);
+                        String path = sc.nextLine();
+                        local_directory_obj.list_files(path, null, true);
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "list files with":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        System.out.println("Please enter path of a directory whose files you want to list:");
+                        Scanner sc = new Scanner(System.in);
+                        String path = sc.nextLine();
+                        System.out.println("Please enter extensions of files you want to list: (separate them with ';')");
+                        String extension_str = sc.nextLine();
+                        String[] extensions = extension_str.split(";");
+                        local_directory_obj.list_files(path, extensions, false);
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "list files with r":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        System.out.println("Please enter path of a directory whose files you want to list:");
+                        Scanner sc = new Scanner(System.in);
+                        String path = sc.nextLine();
+                        System.out.println("Please enter extensions of files you want to list: (separate them with ';')");
+                        String extension_str = sc.nextLine();
+                        String[] extensions = extension_str.split(";");
+                        local_directory_obj.list_files(path, extensions, true);
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "list dirs":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        System.out.println("Please enter path of a directory whose directories you want to list:");
+                        Scanner sc = new Scanner(System.in);
+                        String path = sc.nextLine();
+                        local_directory_obj.list_directories(path, false);
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "list dirs r":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        System.out.println("Please enter path of a directory whose directories you want to list:");
+                        Scanner sc = new Scanner(System.in);
+                        String path = sc.nextLine();
+                        local_directory_obj.list_directories(path, true);
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "create blacklist":
+                    break;
 
             }
 
