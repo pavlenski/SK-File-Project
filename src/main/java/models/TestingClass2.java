@@ -17,6 +17,7 @@ public class TestingClass2 {
         Local_Directory directory = new Local_Directory();
         local.setStorage_path("D:\\SK Test");
         directory.setStorage_path("D:\\SK Test");
+
         /*try {
             local.create_file("C:\\Users\\Nikola\\Desktop\\SK Test", "Test file");
         } catch (Create_File_Exception e) {

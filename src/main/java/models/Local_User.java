@@ -73,6 +73,8 @@ public class Local_User extends User implements User_Interface {
 
     @Override
     public void create_user(String username, String password, UserPriority userPriority) throws Create_User_Exception {
+        User new_user = new User(username, password, userPriority);
+        users.add(new_user);
 
     }
 
