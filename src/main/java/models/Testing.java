@@ -17,96 +17,6 @@ import java.util.Scanner;
 
 public class Testing {
 
-    private static void init(File storage_file, File users_file, File storage_final) throws Invalid_Path_Exception, IOException {
-        System.out.println("Enter storage path: ");
-        Scanner sc = new Scanner(System.in);
-        String storage_path = sc.nextLine();
-
-        if (!storage_path.isEmpty()) {
-
-            File storage = new File(storage_path);
-
-            if (!storage.exists()) {
-                storage.mkdir();
-
-                File storage_meta_file = new File(storage_path + File.separator + "storage.meta");
-                storage_meta_file.createNewFile();
-                File users_meta_file = new File(storage_path + File.separator + "users.meta");
-                users_meta_file.createNewFile();
-
-                try {
-                    FileWriter fw = new FileWriter(storage_meta_file);
-                    PrintWriter pw = new PrintWriter(fw);
-                    pw.println(storage_path);
-                    pw.close();
-                    fw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    FileWriter fw = new FileWriter(users_meta_file);
-                    PrintWriter pw = new PrintWriter(fw);
-                    pw.println("admin:admin:ADMIN");
-                    pw.close();
-                    fw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                storage_file = storage_meta_file;
-                users_file = users_meta_file;
-                storage_final = storage;
-                System.out.println("Storage created at path: \"" + storage_path + "\".");
-
-            } else {
-                if (!storage.isDirectory()) {
-                    System.out.println("Path you entered is not directory!");
-                    throw new Invalid_Path_Exception();
-                } else {
-                    File storage_meta_file = new File(storage_path + File.separator + "storage.meta");
-                    File users_meta_file = new File(storage_path + File.separator + "users.meta");
-                    /*if (!storage_meta_file.exists()) {
-                        System.out.println("No storage_meta_file found! Creating one...");
-                        storage_meta_file.createNewFile();
-                        try {
-                            FileWriter fw = new FileWriter(storage_meta_file);
-                            PrintWriter pw = new PrintWriter(fw);
-                            pw.println(storage_path);
-                            pw.close();
-                            fw.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (!users_meta_file.exists()) {
-                        System.out.println("No users_meta_file found! Creating one...");
-                        users_meta_file.createNewFile();
-                        try {
-                            FileWriter fw = new FileWriter(users_meta_file);
-                            PrintWriter pw = new PrintWriter(fw);
-                            pw.println("admin:admin:ADMIN");
-                            pw.close();
-                            fw.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }*/
-                    if (!storage_meta_file.exists() || !users_meta_file.exists()) throw new Invalid_Path_Exception();
-                    else {
-                        storage_file = storage_meta_file;
-                        users_file = users_meta_file;
-                        storage_final = storage;
-                        System.out.println("Storage found at path: \"" + storage_path + "\".");
-                    }
-                }
-            }
-
-        } else {
-            throw new Invalid_Path_Exception();
-        }
-    }
-
     private static void local_implementation() throws Exception {
         System.out.println("Enter storage path: ");
         Scanner scanner = new Scanner(System.in);
@@ -364,7 +274,7 @@ public class Testing {
                     }
                     break;
 
-                case "generate archive":
+                case "archive file":
                     if (local_user_obj.getCurrent_user() != null ) {
                         if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
                             System.out.println("Please enter path of a file you want to archive:");
@@ -381,7 +291,7 @@ public class Testing {
                     }
                     break;
 
-                case "generate multiple archive":
+                case "archive multiple files":
                     if (local_user_obj.getCurrent_user() != null ) {
                         if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
                             Scanner sc = new Scanner(System.in);
