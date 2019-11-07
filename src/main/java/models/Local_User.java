@@ -15,15 +15,15 @@ import java.util.List;
 public class Local_User implements User_Interface {
     private String users_file;
     private List<User> users;
+    private User current_user;
 
     public Local_User() {
         this.users = new ArrayList();
+        current_user = null;
     }
 
     public void init_users() throws Exception {
-        System.out.println(users_file);
         File file = new File(users_file);
-        System.out.println(users_file);
         if (file.exists()) {
             try{
                 BufferedReader br = new BufferedReader(new FileReader(file));
@@ -62,13 +62,30 @@ public class Local_User implements User_Interface {
     }
 
     @Override
-    public void log_in(String username, String password) throws Log_In_Exception {
-
+    public boolean log_in(String username, String password) throws Log_In_Exception {
+        for (User u:users){
+            if (u.getUsername().equals(username)){
+                if (u.getPassword().equals(password)){
+                    current_user = u;
+                    System.out.println("User \"" + username + "\" successfully logged in.");
+                    return true;
+                } else{
+                    System.out.println("Wrong password!");
+                    throw new Log_In_Exception();
+                }
+            }
+        }
+        throw new Log_In_Exception();
     }
 
     @Override
-    public void log_out() throws Log_Out_Exception {
-
+    public boolean log_out() throws Log_Out_Exception {
+        if (current_user != null) {
+            current_user = null;
+            System.out.println("User successfully logged out.");
+            return true;
+        }
+        throw new Log_Out_Exception();
     }
 
     @Override
@@ -77,6 +94,7 @@ public class Local_User implements User_Interface {
         if (!users.contains(new_user)) {
             users.add(new_user);
             rewrite_users();
+            System.out.println("User \"" + username + "\" successfully created.");
         } else throw new Create_User_Exception();
     }
 
@@ -86,7 +104,7 @@ public class Local_User implements User_Interface {
             if (u.getUsername().equals(username)) {
                 users.remove(u);
                 rewrite_users();
-                System.out.println("User with username \"" + username + "\" successfully deleted.");
+                System.out.println("User \"" + username + "\" successfully deleted.");
                 return;
             }
         }
@@ -107,5 +125,13 @@ public class Local_User implements User_Interface {
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    public User getCurrent_user() {
+        return current_user;
+    }
+
+    public UserPriority getCurrent_user_priority(){
+        return current_user.getPriority();
     }
 }
