@@ -7,12 +7,20 @@ public class User {
     private String username;
     private String password;
     private UserPriority priority;
-    private String dupe;
 
     public User(String username, String password, UserPriority priority) {
         this.username = username;
         this.password = password;
         this.priority = priority;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof User){
+            User user = (User) obj;
+            if (user.getUsername() == this.username) return true;
+        }
+        return false;
     }
 
     public String getUsername() {
