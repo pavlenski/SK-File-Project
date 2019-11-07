@@ -289,6 +289,11 @@ public class Local_Directory implements Directory_Manipulation_Interface {
 
     }
 
+    @Override
+    public void search_files(String file_name) throws Search_Files_Exception {
+        System.out.println("ae");
+    }
+
     public String getStorage_path() {
         return storage_path;
     }
