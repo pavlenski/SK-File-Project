@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -287,6 +286,13 @@ public class Local_Directory implements Directory_Manipulation_Interface {
 
     @Override
     public void create_extension_blacklist(String s, String[] strings) throws Create_Extension_Blacklist_Exception {
+
+    }
+
+    @Override
+    public void search(String s) throws Search_Exception {
+
+
 
     }
 
