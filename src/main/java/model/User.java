@@ -18,7 +18,7 @@ public class User {
     public boolean equals(Object obj) {
         if (obj instanceof User){
             User user = (User) obj;
-            if (user.getUsername() == this.username) return true;
+            if (user.getUsername().equals(this.username)) return true;
         }
         return false;
     }
