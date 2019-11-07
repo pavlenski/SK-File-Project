@@ -37,6 +37,4 @@ public interface Directory_Manipulation_Interface {
 
     void create_extension_blacklist(String path, String[] extensions) throws Create_Extension_Blacklist_Exception;
 
-    void search(String name) throws Search_Exception;
-
 }
