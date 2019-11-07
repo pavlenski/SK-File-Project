@@ -1,6 +1,7 @@
 package models;
 
 import exceptions.*;
+import model.UserPriority;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,17 @@ public class TestingClass2 {
     public static void main(String[] args) {
         Local_File local = new Local_File();
         Local_Directory directory = new Local_Directory();
+        Local_User local_user = new Local_User();
+
         local.setStorage_path("D:\\SK Test");
         directory.setStorage_path("D:\\SK Test");
+        local_user.setUsers_file("D:\\SK Test\\users.meta");
+
+        try {
+            local_user.create_user("new_user", "new_user_passwprs", UserPriority.BASIC);
+        } catch (Create_User_Exception e) {
+            e.printStackTrace();
+        }
 
         /*try {
             local.create_file("C:\\Users\\Nikola\\Desktop\\SK Test", "Test file");
