@@ -322,7 +322,7 @@ public class Local_Implementation_Test {
                             List<File> files = new ArrayList<>();
                             for (String s:parse_paths){
                                 File f = new File(s);
-                                files.add(f);
+                                if (f.exists()) files.add(f);
                             }
                             System.out.println("Please enter how you want to name this archive:");
                             String archive_name = sc.nextLine();
@@ -373,7 +373,7 @@ public class Local_Implementation_Test {
                             if (check_extension(local_directory_obj, new_name)) {
                                 local_file_obj.rename_file(path, new_name);
                             } else {
-                                System.out.println("You can't reneme file with that extension (it's on a blacklist). File not renamed.");
+                                System.out.println("You can't rename file with that extension (it's on a blacklist). File not renamed.");
                             }
                         } else {
                             System.out.println("You don't have permission to do this command!");
