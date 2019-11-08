@@ -211,6 +211,8 @@ public class Local_File implements File_Manipulation_Interface {
                 }
 
                 zos.close();
+
+                System.out.println("File successfully archived as \"" + archive_name + "\".");
             } catch (Exception e) {
                 throw new Generate_Archive_From_Multiple_Files_Exception();
             }
