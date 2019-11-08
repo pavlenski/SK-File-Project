@@ -113,6 +113,7 @@ public class Testing {
         local_directory_obj.setStorage_path(storage.getAbsolutePath());
 
         local_user_obj.init_users();
+        local_directory_obj.init_blacklist();
 
         while (true) {
             //System.out.print("[Local storage]: ");
@@ -542,6 +543,34 @@ public class Testing {
                     break;
 
                 case "create blacklist":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        if (local_user_obj.getCurrent_user_priority() == UserPriority.ADMIN) {
+                            Scanner sc = new Scanner(System.in);
+                            System.out.println("Please enter extensions of files you want to blacklist: (separate paths with ';')");
+                            String extensions = sc.nextLine();
+                            String[] new_extensions = extensions.split(";");
+                            local_directory_obj.create_extension_blacklist(storage_path, new_extensions);
+                        } else {
+                            System.out.println("You don't have permission to do this command!");
+                        }
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                case "search":
+                    if (local_user_obj.getCurrent_user() != null ) {
+                        System.out.println("Please enter name of a file you want to search:");
+                        Scanner sc = new Scanner(System.in);
+                        String file_name = sc.nextLine();
+                        local_directory_obj.search_files(file_name);
+                    } else {
+                        System.out.println("You have to be logged in first!");
+                    }
+                    break;
+
+                default:
+                    System.out.println("Command \"" + option + "\" doens't exist.");
                     break;
 
             }

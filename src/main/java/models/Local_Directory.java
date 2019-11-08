@@ -15,8 +15,56 @@ import java.util.zip.ZipOutputStream;
 public class Local_Directory implements Directory_Manipulation_Interface {
 
     private String storage_path = null;
+    private String[] extension_blacklist;
 
     public Local_Directory() {
+
+    }
+
+    public void init_blacklist() throws Exception {
+        File file = new File(storage_path + File.separator + "storage.meta");
+        if (file.exists()) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line = "";
+                line = br.readLine(); //to bypass storage path line in file
+                List<String> all = new ArrayList<>();
+                while ((line = br.readLine()) != null) {
+                    Collections.addAll(all, line.split(";"));
+                }
+                if (!all.isEmpty()){
+                    extension_blacklist = new String[all.size()];
+                    all.toArray(extension_blacklist);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void rewrite_extensions() {
+        File file = new File(storage_path + File.separator + "storage.meta");
+        if (file.exists()) {
+            try {
+                FileWriter fw = new FileWriter(file);
+                PrintWriter pw = new PrintWriter(fw);
+                pw.println(storage_path);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < extension_blacklist.length; i++) {
+                    if (i != extension_blacklist.length - 1) {
+                        sb.append(extension_blacklist[i]);
+                        sb.append(";");
+                    } else {
+                        sb.append(extension_blacklist[i]);
+                    }
+                }
+                pw.println(sb);
+                pw.close();
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -41,7 +89,7 @@ public class Local_Directory implements Directory_Manipulation_Interface {
     @Override
     public void create_multiple_directories(String path, String common_directories_name, int no_directories) throws Create_Multiple_Directories_Exception {
         if (!path.isEmpty() && path.startsWith(storage_path)) {
-            for (int i = 1; i <= no_directories; i++){
+            for (int i = 1; i <= no_directories; i++) {
                 File file = new File(path + File.separator + common_directories_name + i);
                 if (!file.exists()) {
                     if (file.mkdir()) {
@@ -53,7 +101,7 @@ public class Local_Directory implements Directory_Manipulation_Interface {
                     throw new Create_Multiple_Directories_Exception();
                 }
             }
-            System.out.println("Directories \"" + common_directories_name + "{1..." + no_directories +"}\" successfully created at \"" + path + "\".");
+            System.out.println("Directories \"" + common_directories_name + "{1..." + no_directories + "}\" successfully created at \"" + path + "\".");
         } else {
             throw new Create_Multiple_Directories_Exception();
         }
@@ -180,7 +228,7 @@ public class Local_Directory implements Directory_Manipulation_Interface {
 
     @Override
     public void upload_multiple_archived_directories(List<File> files, String destination, String name) throws Upload_Multiple_Archives_Exception {
-        //no point, same as download multiple
+
     }
 
     @Override
@@ -246,7 +294,7 @@ public class Local_Directory implements Directory_Manipulation_Interface {
                 ArrayList<File> files = new ArrayList<>(FileUtils.listFiles(directory, extension_filter, recursive));
                 Collections.sort(files);
                 System.out.println("Files in \"" + path + "\" are:");
-                for (File f : files){
+                for (File f : files) {
                     System.out.println(f.getName());
                 }
             } else {
@@ -263,16 +311,16 @@ public class Local_Directory implements Directory_Manipulation_Interface {
             File directory = new File(path + File.separator);
             if (directory.exists() && directory.isDirectory()) {
                 ArrayList<File> directories = null;
-                if (recursive){
+                if (recursive) {
                     directories = new ArrayList<>(FileUtils.listFilesAndDirs(directory, new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY));
                     directories.remove(directory);
                     System.out.println("Directories in \"" + path + "\" are:");
-                    for (File d : directories){
+                    for (File d : directories) {
                         System.out.println(d.getName());
                     }
                 } else {
                     File[] dirs = directory.listFiles((java.io.FileFilter) FileFilterUtils.directoryFileFilter());
-                    for (File d:dirs){
+                    for (File d : dirs) {
                         System.out.println(d.getName());
                     }
                 }
@@ -285,13 +333,47 @@ public class Local_Directory implements Directory_Manipulation_Interface {
     }
 
     @Override
-    public void create_extension_blacklist(String s, String[] strings) throws Create_Extension_Blacklist_Exception {
+    public void create_extension_blacklist(String path, String[] new_extensions) throws Create_Extension_Blacklist_Exception {
+        List<String> both = new ArrayList<>();
+        if (extension_blacklist != null) Collections.addAll(both, extension_blacklist);
+        Collections.addAll(both, new_extensions);
+        extension_blacklist = new String[both.size()];
+        both.toArray(extension_blacklist);
+        System.out.println("Extenstions added.");
+        rewrite_extensions();
+
+    }
+
+    private void search(File file, String file_name, List<String> results) {
+        if (file.isDirectory()) {
+            if (file.canRead()) {
+                for (File temp : file.listFiles()) {
+                    if (temp.isDirectory()) {
+                        search(temp, file_name, results);
+                    } else {
+                        if ((temp.getName().toLowerCase()).equals(file_name)) {
+                            results.add(temp.getAbsoluteFile().toString());
+                        }
+
+                    }
+                }
+            }
+        }
 
     }
 
     @Override
     public void search_files(String file_name) throws Search_Files_Exception {
-        System.out.println("ae");
+        File storage = new File(storage_path);
+        List<String> results = new ArrayList<>();
+        if (storage.exists() && storage.isDirectory()) {
+            search(storage, file_name, results);
+        } else {
+            throw new Search_Files_Exception();
+        }
+        for (String s : results) {
+            System.out.println(s);
+        }
     }
 
     public String getStorage_path() {
@@ -302,4 +384,11 @@ public class Local_Directory implements Directory_Manipulation_Interface {
         this.storage_path = storage_path;
     }
 
+    public String[] getExtension_blacklist() {
+        return extension_blacklist;
+    }
+
+    public void setExtension_blacklist(String[] extension_blacklist) {
+        this.extension_blacklist = extension_blacklist;
+    }
 }
