@@ -13,7 +13,7 @@ public abstract class AbstractDropBoxProvider {
 
     private DbxClientV2 client;
 
-    protected DbxClientV2 getClient() {
+    public DbxClientV2 getClient() {
         if(client == null) connect();
         return client;
     }

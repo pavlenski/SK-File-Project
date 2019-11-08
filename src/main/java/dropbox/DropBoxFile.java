@@ -25,9 +25,10 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
     @Override
     public void create_file(String path, String file_name) throws Create_File_Exception, Invalid_Path_Exception {
 
-        if(!path.isEmpty() && !file_name.isEmpty()) {
+        if(path.isEmpty()) throw new Invalid_Path_Exception();
+        if(file_name.isEmpty()) throw  new Create_File_Exception();
 
-            if(path == "ROOT") path = "";
+            if(path.equals("ROOT")) path = CloudStroage.getStorageRootPath();
 
             String split[] = file_name.split("\\.");
             String suffix = "." + split[split.length - 1];
@@ -39,27 +40,22 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
 
             try {
                 File file = File.createTempFile(name, suffix);
-                System.out.println(file.getName());
+                //System.out.println(file.getName());
 
                 String full_path = ROOT_DIRECTORY_PATH + path + "/" + file_name;
 
                 try (InputStream in = new FileInputStream(file)) {
                     getClient().files().uploadBuilder(full_path).uploadAndFinish(in);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    e.printStackTrace();                //uploading excpetion
                     throw new Create_File_Exception();
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace();  //creating file exception
                 throw new Create_File_Exception();
             }
             System.out.println("Successfully created " + file_name + " file on the cloud.");
-
-        } else {
-            throw new Invalid_Path_Exception();
-        }
-
     }
 
     @Override
@@ -98,7 +94,7 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
         if(!source.isEmpty() && !destination.isEmpty()) {
 
             String split[] = source.split("/");
-            String full_path = destination + "\\" + split[split.length - 1];
+            String full_path = destination + "\\" + split[split.length - 1];  //ovde treba file.separatror!
 
             try (OutputStream downloadFile = new FileOutputStream(full_path)) {
                 getClient().files().downloadBuilder(source).download(downloadFile);
@@ -155,7 +151,10 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
 
             if(file.exists()) {
 
-                String full_path = ROOT_DIRECTORY_PATH + destination + "/" + file.getName();
+                if(destination.equals("/")) destination = "";
+                String full_path = destination + "/" + file.getName();
+
+
 
                 try (InputStream in = new FileInputStream(file)) {
                     getClient().files().uploadBuilder(full_path).uploadAndFinish(in);
