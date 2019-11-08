@@ -17,6 +17,13 @@ import java.util.Scanner;
 
 public class Testing {
 
+    private static boolean check_extension(Local_Directory local_dir_obj, String file_name){
+        for (String s : local_dir_obj.getExtension_blacklist()){
+            if (file_name.endsWith("." + s)) return false;
+        }
+        return true;
+    }
+
     private static void local_implementation() throws Exception {
         System.out.println("Enter storage path: ");
         Scanner scanner = new Scanner(System.in);
@@ -190,9 +197,13 @@ public class Testing {
                             System.out.println("Please enter new file name:");
                             Scanner sc = new Scanner(System.in);
                             String name = sc.nextLine();
-                            System.out.println("Please enter path where you want to create this new file:");
-                            String path = sc.nextLine();
-                            local_file_obj.create_file(path, name);
+                            if (check_extension(local_directory_obj, name)) {
+                                System.out.println("Please enter path where you want to create this new file:");
+                                String path = sc.nextLine();
+                                local_file_obj.create_file(path, name);
+                            } else {
+                                System.out.println("You can't use that extension (it's on a blacklist). File not created.");
+                            }
                         } else {
                             System.out.println("You don't have permission to do this command!");
                         }
@@ -241,9 +252,13 @@ public class Testing {
                             System.out.println("Please enter path of a file you want to copy:");
                             Scanner sc = new Scanner(System.in);
                             String source = sc.nextLine();
-                            System.out.println("Please enter path where you want to paste copied file:");
-                            String destination = sc.nextLine();
-                            local_file_obj.download_file(source, destination);
+                            if (check_extension(local_directory_obj, source)) {
+                                System.out.println("Please enter path where you want to paste copied file:");
+                                String destination = sc.nextLine();
+                                local_file_obj.download_file(source, destination);
+                            } else {
+                                System.out.println("You can't copy a file with that extension (it's on a blacklist). File not copied.");
+                            }
                         } else {
                             System.out.println("You don't have permission to do this command!");
                         }
@@ -261,8 +276,12 @@ public class Testing {
                             String[] parse_paths = paths.split(";");
                             List<File> files = new ArrayList<>();
                             for (String s:parse_paths){
-                                File f = new File(s);
-                                files.add(f);
+                                if (check_extension(local_directory_obj, s)) {
+                                    File f = new File(s);
+                                    files.add(f);
+                                } else {
+                                    System.out.println("File on path: \"" + s + "\" is on extension blacklist. File not copied.");
+                                }
                             }
                             System.out.println("Please enter path where you want to paste copied file:");
                             String destination = sc.nextLine();
@@ -283,7 +302,11 @@ public class Testing {
                             String path = sc.nextLine();
                             System.out.println("Please enter how you want to name this archive:");
                             String name = sc.nextLine();
-                            local_file_obj.generate_archive_file(path, name);
+                            if (check_extension(local_directory_obj, name)) {
+                                local_file_obj.generate_archive_file(path, name);
+                            } else {
+                                System.out.println("You can't archive a file with that extension (it's on a blacklist). File not archieved.");
+                            }
                         } else {
                             System.out.println("You don't have permission to do this command!");
                         }
@@ -306,9 +329,13 @@ public class Testing {
                             }
                             System.out.println("Please enter how you want to name this archive:");
                             String archive_name = sc.nextLine();
-                            System.out.println("Please enter path where you want to save this archive:");
-                            String destination = sc.nextLine();
-                            local_file_obj.generate_archive_from_multiple_files(files, archive_name, destination);
+                            if (check_extension(local_directory_obj, archive_name)) {
+                                System.out.println("Please enter path where you want to save this archive:");
+                                String destination = sc.nextLine();
+                                local_file_obj.generate_archive_from_multiple_files(files, archive_name, destination);
+                            } else {
+                                System.out.println("You can't archive files with that extension (it's on a blacklist). Files not archieved.");
+                            }
                         } else {
                             System.out.println("You don't have permission to do this command!");
                         }
@@ -323,9 +350,13 @@ public class Testing {
                             System.out.println("Please enter path of a file you want to move:");
                             Scanner sc = new Scanner(System.in);
                             String source = sc.nextLine();
-                            System.out.println("Please enter path where you want to move selected file:");
-                            String destination = sc.nextLine();
-                            local_file_obj.move_file(source, destination);
+                            if (check_extension(local_directory_obj, source)) {
+                                System.out.println("Please enter path where you want to move selected file:");
+                                String destination = sc.nextLine();
+                                local_file_obj.move_file(source, destination);
+                            } else {
+                                System.out.println("You can't move file with that extension (it's on a blacklist). File not moved.");
+                            }
                         } else {
                             System.out.println("You don't have permission to do this command!");
                         }
@@ -342,7 +373,11 @@ public class Testing {
                             String path = sc.nextLine();
                             System.out.println("Please enter this file's new name:");
                             String new_name = sc.nextLine();
-                            local_file_obj.rename_file(path, new_name);
+                            if (check_extension(local_directory_obj, new_name)) {
+                                local_file_obj.rename_file(path, new_name);
+                            } else {
+                                System.out.println("You can't reneme file with that extension (it's on a blacklist). File not renamed.");
+                            }
                         } else {
                             System.out.println("You don't have permission to do this command!");
                         }
@@ -427,7 +462,11 @@ public class Testing {
                             String path = sc.nextLine();
                             System.out.println("Please enter how you want to name this archive:");
                             String name = sc.nextLine();
-                            local_directory_obj.generate_archive_directory(path, name);
+                            if (check_extension(local_directory_obj, name)) {
+                                local_directory_obj.generate_archive_directory(path, name);
+                            } else {
+                                System.out.println("You can't archive a directory with that extension (it's on a blacklist). Directory not archieved.");
+                            }
                         } else {
                             System.out.println("You don't have permission to do this command!");
                         }

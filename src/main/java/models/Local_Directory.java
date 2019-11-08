@@ -15,10 +15,10 @@ import java.util.zip.ZipOutputStream;
 public class Local_Directory implements Directory_Manipulation_Interface {
 
     private String storage_path = null;
-    private String[] extension_blacklist;
+    private List<String> extension_blacklist;
 
     public Local_Directory() {
-
+        extension_blacklist = new ArrayList<>();
     }
 
     public void init_blacklist() throws Exception {
@@ -33,8 +33,9 @@ public class Local_Directory implements Directory_Manipulation_Interface {
                     Collections.addAll(all, line.split(";"));
                 }
                 if (!all.isEmpty()){
-                    extension_blacklist = new String[all.size()];
-                    all.toArray(extension_blacklist);
+                    for (String s:all){
+                        extension_blacklist.add(s);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -50,14 +51,11 @@ public class Local_Directory implements Directory_Manipulation_Interface {
                 PrintWriter pw = new PrintWriter(fw);
                 pw.println(storage_path);
                 StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < extension_blacklist.length; i++) {
-                    if (i != extension_blacklist.length - 1) {
-                        sb.append(extension_blacklist[i]);
-                        sb.append(";");
-                    } else {
-                        sb.append(extension_blacklist[i]);
-                    }
+                for (String s : extension_blacklist) {
+                    sb.append(s);
+                    sb.append(";");
                 }
+                sb.deleteCharAt(sb.length() - 1);
                 pw.println(sb);
                 pw.close();
                 fw.close();
@@ -334,14 +332,13 @@ public class Local_Directory implements Directory_Manipulation_Interface {
 
     @Override
     public void create_extension_blacklist(String path, String[] new_extensions) throws Create_Extension_Blacklist_Exception {
-        List<String> both = new ArrayList<>();
-        if (extension_blacklist != null) Collections.addAll(both, extension_blacklist);
-        Collections.addAll(both, new_extensions);
-        extension_blacklist = new String[both.size()];
-        both.toArray(extension_blacklist);
+        if (new_extensions == null) throw new Create_Extension_Blacklist_Exception();
+        for (String s:new_extensions){
+            if (!extension_blacklist.contains(s)) extension_blacklist.add(s);
+        }
+        Collections.sort(extension_blacklist);
         System.out.println("Extenstions added.");
         rewrite_extensions();
-
     }
 
     private void search(File file, String file_name, List<String> results) {
@@ -384,11 +381,11 @@ public class Local_Directory implements Directory_Manipulation_Interface {
         this.storage_path = storage_path;
     }
 
-    public String[] getExtension_blacklist() {
+    public List<String> getExtension_blacklist() {
         return extension_blacklist;
     }
 
-    public void setExtension_blacklist(String[] extension_blacklist) {
+    public void setExtension_blacklist(List<String> extension_blacklist) {
         this.extension_blacklist = extension_blacklist;
     }
 }
