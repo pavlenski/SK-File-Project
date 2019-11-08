@@ -10,9 +10,13 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DropBoxDirectory extends AbstractDropBoxProvider implements Directory_Manipulation_Interface {
+
+    private List<String> extension_blacklist = new ArrayList<String>();
 
     @Override
     public void create_directory(String path, String directory_name) throws Create_Directory_Exception {
@@ -218,7 +222,7 @@ public class DropBoxDirectory extends AbstractDropBoxProvider implements Directo
     public void move_directory(String source, String destination) throws Move_Exception {
         if(!source.isEmpty() && !destination.isEmpty()) {
             if(destination.equals("ROOT")) {
-                destination = CloudStroage.getStorageRootPath() + "/"; // treba + '/'
+                destination = CloudStroage.getStorageRootPath(); // treba + '/'
             } else {
                 if(!DropBoxChecker.check_path(getClient(), destination)) throw new Move_Exception();
                 if(!DropBoxChecker.check_folder_meta_data(getClient(), destination)) throw new Move_Exception();
@@ -228,7 +232,7 @@ public class DropBoxDirectory extends AbstractDropBoxProvider implements Directo
 
             String split_dir[] = source.split("/");
             String dir_name = split_dir[split_dir.length - 1];
-            String full_path = destination + dir_name;
+            String full_path = destination + "/" + dir_name;
             if(full_path.equals(source)) throw new Move_Exception();
 
             try {
@@ -269,14 +273,16 @@ public class DropBoxDirectory extends AbstractDropBoxProvider implements Directo
                     String suffix[] = fh.getFileName().split("\\.");
                     if(recursive) {
                         if(suffix.length > 1) { if(!DropBoxChecker.check_extension(extension_filter, "." + suffix[suffix.length - 1])) continue; }  //okej u prevodu ako nema extension
-                        else if(extension_filter != null) continue;                                                                        //i extensioni nizu zadati printovace fajl
+                        //else if(extension_filter != null) continue;                                                                        //i extensioni nizu zadati printovace fajl
                         no_files = false;                                                                                               //u suprotnom preskocice korak i nastaviec dalje sa petljom
                         System.out.println(fh.getFileName());                                                                               //ako ima extension i extensioni su zadati proverice dal ga ima u spisku
                     } else {                                                                                                               //i printovace, ako nisu zadati extensioni svakako ce vratiti true (ovaj checker)
+                        //System.out.println(suffix.length);
                         if(suffix.length > 1) { if(!DropBoxChecker.check_extension(extension_filter, "." + suffix[suffix.length - 1])) continue; } //i izlistace se zeljeni element
-                        else if(extension_filter != null) continue;
+                        //else if(extension_filter != null) continue;
                         String split[] = fh.getFileName().split("/");
-                        if(split.length == 1) {
+                        //System.out.println(fh.getFileName() + " length: " + split.length);
+                        if(split.length == 2) {
                             System.out.println(fh.getFileName());
                             no_files = false;
                         }
@@ -329,15 +335,71 @@ public class DropBoxDirectory extends AbstractDropBoxProvider implements Directo
         }
     }
 
+    public void init_blacklist() throws Exception {
+        File file = new File("scramble" + File.separator + "storage.meta");
+        if (file.exists()) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line = "";
+                line = br.readLine(); //to bypass storage path line in file
+                List<String> all = new ArrayList<>();
+                while ((line = br.readLine()) != null) {
+                    Collections.addAll(all, line.split(";"));
+                }
+                if (!all.isEmpty()){
+                    for (String s:all){
+                        extension_blacklist.add(s);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void rewrite_extensions() {
+        File file = new File("scramble" + File.separator + "storage.meta");
+        if (file.exists()) {
+            try {
+                FileWriter fw = new FileWriter(file);
+                PrintWriter pw = new PrintWriter(fw);
+                pw.println(CloudStroage.getStorageRootPath());
+                StringBuilder sb = new StringBuilder();
+                for (String s : extension_blacklist) {
+                    sb.append(s);
+                    sb.append(";");
+                }
+                sb.deleteCharAt(sb.length() - 1);
+                pw.println(sb);
+                pw.close();
+                fw.close();
+
+                DropBoxFile db_file = new DropBoxFile();
+                db_file.delete_file(CloudStroage.getStorageRootPath() + "/storage.meta");
+                db_file.upload_file("scramble" + File.separator + "storage.meta", CloudStroage.getStorageRootPath());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     @Override
-    public void create_extension_blacklist(String s, String[] strings) throws Create_Extension_Blacklist_Exception {
-        System.out.println("no pls");
+    public void create_extension_blacklist(String path, String[] new_extensions) throws Create_Extension_Blacklist_Exception {
+        if (new_extensions == null) throw new Create_Extension_Blacklist_Exception();
+        for (String s:new_extensions){
+            if (!extension_blacklist.contains(s)) extension_blacklist.add(s);
+        }
+        Collections.sort(extension_blacklist);
+        System.out.println("Extenstions added.");
+        rewrite_extensions();
     }
 
     @Override
     public void search_files(String name) throws Search_Files_Exception {
         if(name.isEmpty()) throw new Search_Files_Exception();
-        String path = CloudStroage.getStorageRootPath() + "/" + "Kemcun"; // ovo promeni JEBOTE
+        String path = CloudStroage.getStorageRootPath(); // ovo promeni JEBOTE
         if(!DropBoxChecker.check_path(getClient(), path)) throw new Search_Files_Exception();
 
         try (OutputStream dld_file = new FileOutputStream("scramble\\test_search.zip")) {
@@ -360,5 +422,9 @@ public class DropBoxDirectory extends AbstractDropBoxProvider implements Directo
             e.printStackTrace();
             throw new Search_Files_Exception();
         }
+    }
+
+    public List<String> getExtension_blacklist() {
+        return extension_blacklist;
     }
 }

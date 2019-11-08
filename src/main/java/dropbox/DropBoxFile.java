@@ -7,6 +7,7 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.Metadata;
 import exceptions.*;
 import interfaces.File_Manipulation_Interface;
+import model.DropBoxChecker;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -29,6 +30,7 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
         if(file_name.isEmpty()) throw  new Create_File_Exception();
 
             if(path.equals("ROOT")) path = CloudStroage.getStorageRootPath();
+            if(path.equals("/")) path = CloudStroage.getStorageRootPath();
 
             String split[] = file_name.split("\\.");
             String suffix = "." + split[split.length - 1];
@@ -42,7 +44,14 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
                 File file = File.createTempFile(name, suffix);
                 //System.out.println(file.getName());
 
-                String full_path = ROOT_DIRECTORY_PATH + path + "/" + file_name;
+
+                String full_path = "";
+                if(path.equals(CloudStroage.getStorageRootPath())){
+                    full_path = path + "/" + file_name;
+                }
+                else{
+                    full_path = CloudStroage.getStorageRootPath() + path + "/" + file_name;
+                }
 
                 try (InputStream in = new FileInputStream(file)) {
                     getClient().files().uploadBuilder(full_path).uploadAndFinish(in);
@@ -71,15 +80,17 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
             try {
                 //Metadata data = getClient().files().getMetadata(path);                             -> data used in general
                 //FolderMetadata fldata = (FolderMetadata) getClient().files().getMetadata(path);    -> data used for directories
-                FileMetadata fdata = (FileMetadata) getClient().files().getMetadata(path);         //-> data used for files
-                file_name = fdata.getName();
-                getClient().files().deleteV2(fdata.getPathLower());
+                //FileMetadata fdata = (FileMetadata) getClient().files().getMetadata(path);         //-> data used for files
+                //file_name = fdata.getName();
+
+                if(!DropBoxChecker.check_file_meta_data(getClient(), path)) throw new Delete_Exception();
+                getClient().files().deleteV2(path);
             } catch (Exception e) {
                 //e.printStackTrace();
                 throw new Delete_Exception();
             }
 
-            System.out.println("Successfully deleted " + file_name + " from the cloud.");
+            System.out.println("Successfully deleted the file from the cloud.");
 
         } else {
             throw new Delete_Exception();
@@ -153,8 +164,6 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
 
                 if(destination.equals("/")) destination = "";
                 String full_path = destination + "/" + file.getName();
-
-
 
                 try (InputStream in = new FileInputStream(file)) {
                     getClient().files().uploadBuilder(full_path).uploadAndFinish(in);
@@ -239,7 +248,10 @@ public class DropBoxFile extends AbstractDropBoxProvider implements File_Manipul
             innitial_path = innitial_path.substring(0, innitial_path.length() - 1);
 
             try (OutputStream downloadFile = new FileOutputStream(temporary_file_path)) {
+
+                if(!DropBoxChecker.check_file_meta_data(getClient(), path)) throw new Archive_Exception();
                 getClient().files().downloadBuilder(path).download(downloadFile);
+
 
                 String zip_file_path = archive_name + ".zip";
                 File file = new File(temporary_file_path);   //fajl koji cemo zipovati i poslati na klaud pa da ga skine veniger
